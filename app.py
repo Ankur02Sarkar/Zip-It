@@ -6,8 +6,10 @@ from PyQt5.QtCore import Qt
 import PIL
 from PIL import Image
 import os
-import sys, os
-os.chdir(sys._MEIPASS)
+import sys
+import os
+# os.chdir(sys._MEIPASS)
+
 
 class App(QMainWindow):
     def __init__(self):
@@ -212,7 +214,7 @@ class App(QMainWindow):
         fileName, _ = QFileDialog.getOpenFileName(
             self, "Choose a File", "", "All Files (*);;JPG Files (*.jpg);;PNG Files (*.png)")
         if fileName:
-            print(fileName)
+            # print(fileName)
             self.imagePath.setText(fileName)
             img = Image.open(fileName)
             self.imgWidth = img.width
@@ -238,8 +240,6 @@ class App(QMainWindow):
                 self.batchqualityPath.setText(str(self.imgWidth))
         except Exception as e:
             self.statusBar().showMessage("Error in Selecting Folder")
-        
-        
 
     def singleClicked(self, event):
         self.single.setVisible(False)
@@ -290,26 +290,29 @@ class App(QMainWindow):
         #     self.statusBar().showMessage("Please choose a Valid Image")
         #     return
 
-        print(self.compressWidth)
+        # print(self.compressWidth)
         dir = oldPic.split("/")
-        print(dir)
+        # print(dir)
         tmp = str(dir[-1:])
         tmp2 = str(tmp[2:-2])
         fileExtension = tmp2[-4:]
         newPicName = str(tmp[2:-6]) + "_compressed" + fileExtension
-        print(newPicName)
-        newPicDir = "" #new pic location
+        # print(newPicName)
+        newPicDir = ""  # new pic location
         for directory in dir[:-1]:
             newPicDir = newPicDir + directory + "/"
-        print("newPicDir: " + newPicDir)
+        # print("newPicDir: " + newPicDir)
         newPic = newPicDir + newPicName
-        print("newPic: " + newPic)
+        # print("newPic: " + newPic)
 
-        print("org width: " + str() + " AND compress width: " + str(self.compressWidth))
+        # print("org width: " + str() +
+        #       " AND compress width: " + str(self.compressWidth))
 
         try:
-            self.compress(oldPic, newPic, int(self.qualityPath.text()) )
+            self.compress(oldPic, newPic, int(self.qualityPath.text()))
             self.statusBar().showMessage("Image Compressed")
+            orgImgSize = 1
+            compressImgSize = 1
         except:
             self.statusBar().showMessage("Error in choosing an Image")
 
@@ -330,31 +333,28 @@ class App(QMainWindow):
                 newPic = destDir + "/" + file
                 img = Image.open(oldPic)
                 self.imgWidth = img.width
-                # self.compressWidth = self.imgWidth
                 self.batchqualityPath.setText(str(self.imgWidth))
-                self.compress(oldPic, newPic, int(self.batchqualityPath.text()))
+                self.compress(oldPic, newPic, int(
+                    self.batchqualityPath.text()))
                 totalImg = len(files)
                 count = i
                 percentDone = int((count/totalImg)*100)
-                self.statusBar().showMessage(str(percentDone) + "% Images Compressed" )
+                self.statusBar().showMessage(str(percentDone) + "% Images Compressed")
 
             else:
                 continue
-        self.statusBar().showMessage("All images Compressed" )
+        self.statusBar().showMessage("All images Compressed")
 
-    # Compression Algorithm 
+    # Compression Algorithm
     def compress(self, old_pic, new_pic, mywidth):
         try:
             img = Image.open(old_pic)
-            # mywidth = int(self.qualityPath.text())
-            # might need to change batchqualitypath to qualiypath also
             wpercent = (mywidth/float(img.size[0]))
             hsize = int((float(img.size[1]) * float(wpercent)))
             img = img.resize((mywidth, hsize), PIL.Image.ANTIALIAS)
             img.save(new_pic)
         except Exception as e:
             self.statusBar().showMessage("Error Message: " + e)
-
 
 
 if __name__ == '__main__':
